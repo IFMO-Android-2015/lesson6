@@ -7,7 +7,7 @@ import java.io.InputStream;
 /**
  * Created by dmitry.trunin on 16.11.2015.
  */
-public interface CityJsonParser {
+public interface    CityJsonParser {
 
     void parseCities(InputStream in, @Nullable CityParserCallback callback) throws Exception;
 }
