@@ -73,8 +73,6 @@ public abstract class CityFileImporter implements CityParserCallback {
             parser.parseCities(in, this);
             if (db.inTransaction()) {
                 db.setTransactionSuccessful();
-            }
-            if (db.inTransaction()) {
                 db.endTransaction();
             }
         } catch (Exception e) {
@@ -94,7 +92,7 @@ public abstract class CityFileImporter implements CityParserCallback {
     public void onCityParsed(long id, String name, String country, double lat, double lon) {
         if (!db.inTransaction()) {
             db.beginTransaction();
-            Log.i(LOG_TAG, "Begin transaction");
+            Log.i(LOG_TAG, "Start transaction");
             insertsCount = 0;
         }
         insertCity(db, id, name, country, lat, lon);
