@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -57,10 +58,16 @@ public abstract class CityFileImporter implements CityParserCallback {
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
         try {
+            if(!db.inTransaction())
+                db.beginTransaction();
             parser.parseCities(in, this);
+            if (db.inTransaction()) db.setTransactionSuccessful();
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        }
+        finally {
+            db.endTransaction();
         }
     }
 
@@ -79,14 +86,21 @@ public abstract class CityFileImporter implements CityParserCallback {
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        SQLiteStatement insert = db.compileStatement("INSERT INTO cities ("
+                                + CityContract.CityColumns.CITY_ID + ","
+                                + CityContract.CityColumns.NAME + ","
+                                + CityContract.CityColumns.COUNTRY + ","
+                                + CityContract.CityColumns.LATITUDE + ","
+                                + CityContract.CityColumns.LONGITUDE
+                               + ") VALUES (?, ?, ?, ?, ?)");
+        insert.bindLong(1, id);
+        insert.bindString(2, name);
+        insert.bindString(3, country);
+        insert.bindDouble(4, latitude);
+        insert.bindDouble(5, longitude);
+
+        long rowId = insert.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
