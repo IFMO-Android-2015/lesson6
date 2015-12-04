@@ -53,6 +53,10 @@ public abstract class CityFileImporter implements CityParserCallback {
                     Log.e(LOG_TAG, "Failed to close file: " + e, e);
                 }
             }
+            try {
+                precompiledInsert.close();
+            } catch(Exception e) {
+            }
         }
     }
 
