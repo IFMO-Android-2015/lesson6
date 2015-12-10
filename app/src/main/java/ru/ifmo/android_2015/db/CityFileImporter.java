@@ -41,9 +41,19 @@ public abstract class CityFileImporter implements CityParserCallback {
             in = new BufferedInputStream(in);
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
+            insert = db.compileStatement("INSERT INTO cities (" + CityContract.CityColumns.CITY_ID +
+                    ", " + CityContract.CityColumns.NAME + ", " + CityContract.CityColumns.COUNTRY +
+                    ", " + CityContract.CityColumns.LATITUDE + ", " + CityContract.CityColumns.LONGITUDE + ")" + " VALUES(?, ?, ?, ?, ?)");
             importCities(in);
 
         } finally {
+            if (insert != null) {
+                try {
+                    insert.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             if (in != null) {
                 try {
                     in.close();
@@ -84,10 +94,7 @@ public abstract class CityFileImporter implements CityParserCallback {
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        try {
-            insert = db.compileStatement("INSERT INTO cities (" + CityContract.CityColumns.CITY_ID +
-                    ", " + CityContract.CityColumns.NAME + ", " + CityContract.CityColumns.COUNTRY +
-                    ", " + CityContract.CityColumns.LATITUDE + ", " + CityContract.CityColumns.LONGITUDE + ")" + " VALUES(?, ?, ?, ?, ?)");
+
             insert.bindLong(1, id);
             insert.bindString(2, name);
             insert.bindString(3, country);
@@ -99,15 +106,6 @@ public abstract class CityFileImporter implements CityParserCallback {
                 return false;
             }
             return true;
-        } finally {
-            if (insert != null) {
-                try {
-                    insert.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     private static final String LOG_TAG = "CityReader";
