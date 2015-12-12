@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -55,16 +56,11 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
-
-        db.beginTransaction();
         try {
             parser.parseCities(in, this);
-            db.setTransactionSuccessful();
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
-        } finally {
-            db.endTransaction();
         }
     }
 
