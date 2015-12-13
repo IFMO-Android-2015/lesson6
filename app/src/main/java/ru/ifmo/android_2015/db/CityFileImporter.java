@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -18,13 +19,34 @@ import ru.ifmo.android_2015.json.CityParserCallback;
 import ru.ifmo.android_2015.util.ObservableInputStream;
 import ru.ifmo.android_2015.util.ProgressCallback;
 
+//Без оптимизаций: 518.25
+//Явная транзакция: 11.7
+//Явная транзакция + прекомпилированный запрос: 7
 public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
 
+    private static final String REQUEST = "INSERT INTO " +
+            CityContract.Cities.TABLE +
+            "(" +
+            CityContract.Cities.CITY_ID +
+            "," +
+            CityContract.Cities.NAME +
+            "," +
+            CityContract.Cities.COUNTRY +
+            "," +
+            CityContract.Cities.LATITUDE +
+            "," +
+            CityContract.Cities.LONGITUDE +
+            ")" +
+            " VALUES(?, ?, ?, ?, ?)";
+
+    private final SQLiteStatement query;
+
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
+        query = db.compileStatement(REQUEST);
     }
 
     public final synchronized void importCities(File srcFile,
@@ -54,13 +76,24 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     protected abstract CityJsonParser createParser();
 
+    //Добавлена явная транзакция
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
         try {
+            db.beginTransaction();
             parser.parseCities(in, this);
-
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            if (query != null) {
+                try {
+                    query.close();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Failed to close SQLiteStatement: " + e, e);
+                }
+            }
+            db.endTransaction();
         }
     }
 
@@ -73,20 +106,21 @@ public abstract class CityFileImporter implements CityParserCallback {
         }
     }
 
+    //Добавлено SQLiteStatement
     private boolean insertCity(SQLiteDatabase db,
                                long id,
                                @NonNull String name,
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+        query.bindLong(1, id);
+        query.bindString(2, name);
+        query.bindString(3, country);
+        query.bindDouble(4, latitude);
+        query.bindDouble(5, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        long rowId = query.executeInsert();
+
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
