@@ -62,7 +62,7 @@ public abstract class CityFileImporter implements CityParserCallback {
         CityJsonParser parser = createParser();
         try {
             insert = db.compileStatement("INSERT INTO " + CityContract.Cities.TABLE + "(" + CityContract.CityColumns.CITY_ID + ", " + CityContract.CityColumns.NAME + ", " + CityContract.CityColumns.COUNTRY + ", " + CityContract.CityColumns.LATITUDE + ", " + CityContract.CityColumns.LONGITUDE +
-                    ") VALUE (?, ?, ?, ?, ?)");
+                    ") VALUES (?, ?, ?, ?, ?)");
 
             parser.parseCities(in, this);
             db.setTransactionSuccessful();
