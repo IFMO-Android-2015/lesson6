@@ -85,16 +85,20 @@ public abstract class CityFileImporter implements CityParserCallback {
                                double latitude,
                                double longitude) {
 
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+//        final ContentValues values = new ContentValues();
+//        values.put(CityContract.CityColumns.CITY_ID, id);
+//        values.put(CityContract.CityColumns.NAME, name);
+//        values.put(CityContract.CityColumns.COUNTRY, country);
+//        values.put(CityContract.CityColumns.LATITUDE, latitude);
+//        values.put(CityContract.CityColumns.LONGITUDE, longitude);
 
 //        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+
         insert.bindLong(1, id);
         insert.bindString(2, name);
+        insert.bindString(3, country);
+        insert.bindDouble(4, latitude);
+        insert.bindDouble(5, longitude);
         long rowId = insert.executeInsert();
 
         if (rowId < 0) {

@@ -55,7 +55,8 @@ public class InitCityDBActivity extends ProgressTaskActivity {
         SQLiteDatabase db = CityDBHelper.getInstance(context).getWritableDatabase();
         db.beginTransaction();
         SQLiteStatement insert = db.compileStatement("INSERT INTO " + CityContract.Cities.TABLE +
-                "(" + CityContract.CityColumns.CITY_ID + ", " +  CityContract.CityColumns.NAME + ") VALUES (?, ?)");
+                "(" + CityContract.CityColumns.CITY_ID + ", " +  CityContract.CityColumns.NAME + ", " +  CityContract.CityColumns.COUNTRY +
+                ", " +  CityContract.CityColumns.LONGITUDE + ", " +  CityContract.CityColumns.LATITUDE + ") VALUES (?, ?, ?, ?, ?)");
         try {
             new CityFileImporter_JsonReader(insert /*db*/).importCities(file, progressCallback);
             db.setTransactionSuccessful();
