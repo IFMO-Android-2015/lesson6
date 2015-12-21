@@ -12,7 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import ru.ifmo.android_2015.model.City;
+import ru.ifmo.android_2015.model.Point;
+
 /**
+ * Big memory overhead! Do not use this implementation!
  * Created by dmitry.trunin on 16.11.2015.
  */
 public class CityJsonObjectParser implements CityJsonParser {
@@ -26,6 +30,10 @@ public class CityJsonObjectParser implements CityJsonParser {
         JSONArray citiesArray = new JSONArray(data);
         Log.d(LOG_TAG, "parseCities: parsed buffer into JSONArray");
 
+        if (callback != null) {
+            callback.onParsingBegins();
+        }
+
         for (int i = 0; i < citiesArray.length(); i++) {
             JSONObject cityJson = citiesArray.optJSONObject(i);
             if (cityJson != null) {
@@ -35,6 +43,11 @@ public class CityJsonObjectParser implements CityJsonParser {
                 Log.d(LOG_TAG, "parseCities: parsed " + (i + 1) + " cities");
             }
         }
+
+        if (callback != null) {
+            callback.onParsingEnds();
+        }
+
         Log.d(LOG_TAG, "parseCities <<< done");
     }
 
@@ -69,7 +82,12 @@ public class CityJsonObjectParser implements CityJsonParser {
                     + " country=" + country + " latLon=" + Arrays.toString(latLon));
 
         } else if (callback != null) {
-            callback.onCityParsed(id, cityName, country, latLon[0], latLon[1]);
+            City city = new City();
+            city.setId(id);
+            city.setName(cityName);
+            city.setCountry(country);
+            city.setCoord(new Point(latLon[0], latLon[1]));
+            callback.onCityParsed(city);
         }
     }
 
