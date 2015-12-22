@@ -24,6 +24,7 @@ public abstract class CityFileImporter implements CityParserCallback {
     private SQLiteDatabase db;
     private int importedCount;
     private SQLiteStatement insert;
+
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
     }
