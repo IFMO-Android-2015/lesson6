@@ -28,8 +28,8 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
-        inserter = this.db.compileStatement(String.format("INSERT INTO cities " +
-                        "(%s, %s, %s, %s, %s) VALUES (?,?,?,?,?)", CityContract.CityColumns.CITY_ID,
+        inserter = this.db.compileStatement(String.format("INSERT INTO %s " +
+                        "(%s, %s, %s, %s, %s) VALUES (?,?,?,?,?)", CityContract.Cities.TABLE,CityContract.CityColumns.CITY_ID,
                 CityContract.CityColumns.NAME, CityContract.CityColumns.COUNTRY, CityContract.CityColumns.LATITUDE,
                 CityContract.CityColumns.LONGITUDE));
     }
