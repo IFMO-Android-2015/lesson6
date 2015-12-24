@@ -23,13 +23,13 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
-    private SQLiteStatement insert;
+    private SQLiteStatement inserting;
 
 
     public CityFileImporter(SQLiteDatabase db) {
-        insert = db.compileStatement(
-                "INSERT INTO cities (city_id, name, country, latitude, longitude)"
-                        + " VALUES (?, ?, ?, ?, ?)");
+        inserting = db.compileStatement(
+                "INSERT INTO cities (_id, name, country, latitude, longitude) " +
+                        "VALUES (?, ?, ?, ?, ?)");
         this.db = db;
     }
 
@@ -52,11 +52,11 @@ public abstract class CityFileImporter implements CityParserCallback {
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
-                if(insert  != null) {
+                if(inserting != null) {
                     try {
-                        insert.close();
+                        inserting.close();
                     } catch (Exception ex) {
-                        Log.e(LOG_TAG, "Problems with closing of insert");
+                        Log.e(LOG_TAG, "Problems with closing of inserting", ex);
                     }
                 }
             }
@@ -77,7 +77,6 @@ public abstract class CityFileImporter implements CityParserCallback {
         CityJsonParser parser = createParser();
         try {
             parser.parseCities(in, this);
-
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
         }
@@ -85,27 +84,26 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     @Override
     public void onCityParsed(long id, String name, String country, double lat, double lon) {
-        insertCity(db, id, name, country, lat, lon);
+        insertCity(id, name, country, lat, lon);
         importedCount++;
         if (importedCount % 1000 == 0) {
             Log.d(LOG_TAG, "Processed " + importedCount + " cities");
         }
     }
 
-    private boolean insertCity(SQLiteDatabase db,
-                               long id,
+    private boolean insertCity(long id,
                                @NonNull String name,
                                @NonNull String country,
                                double latitude,
                                double longitude) {
 
-        insert.bindLong(1, id);
-        insert.bindString(2, name);
-        insert.bindString(3, country);
-        insert.bindDouble(4, latitude);
-        insert.bindDouble(5, longitude);
+        inserting.bindLong(1, id);
+        inserting.bindString(2, name);
+        inserting.bindString(3, country);
+        inserting.bindDouble(4, latitude);
+        inserting.bindDouble(5, longitude);
 
-        long rowId = insert.executeInsert();
+        long rowId = inserting.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
