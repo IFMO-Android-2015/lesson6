@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:padding="40dp"
-    tools:context="ru.ifmo.android_2015.worldcam.DemoActivity"
+    tools:context="tk.bioryajenka.worldcam.worldcam.DemoActivity"
     >
 
     <Button

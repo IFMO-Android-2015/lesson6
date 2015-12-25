@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:padding="20dp"
-    tools:context="ru.ifmo.android_2015.worldcam.DemoActivity"
+    tools:context="tk.bioryajenka.worldcam.worldcam.DemoActivity"
     >
 
     <LinearLayout

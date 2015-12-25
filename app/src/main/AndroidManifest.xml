@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.ifmo.android_2015.lesson6.worldcam">
+    package="tk.bioryajenka.worldcam">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -10,24 +10,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:largeHeap="true"
-        android:name="ru.ifmo.android_2015.worldcam.DebugApplication">
+        android:name="tk.bioryajenka.worldcam.DebugApplication">
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.DemoActivity">
+        <activity android:name="tk.bioryajenka.worldcam.DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.DownloadActivity"/>
+        <activity android:name="tk.bioryajenka.worldcam.DownloadActivity"/>
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.InitCityDBActivity"/>
+        <activity android:name="tk.bioryajenka.worldcam.InitCityDBActivity"/>
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.CleanActivity"/>
+        <activity android:name="tk.bioryajenka.worldcam.CleanActivity"/>
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.JsonParserActivity"/>
+        <activity android:name="tk.bioryajenka.worldcam.JsonParserActivity"/>
 
-        <activity android:name="ru.ifmo.android_2015.worldcam.SelectCityActivity"/>
+        <activity android:name="tk.bioryajenka.worldcam.SelectCityActivity"/>
 
     </application>
 
