@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,6 +22,7 @@ import ru.ifmo.android_2015.util.ProgressCallback;
 public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
+    private SQLiteStatement importStatement;
     private int importedCount;
 
     public CityFileImporter(SQLiteDatabase db) {
@@ -32,7 +34,13 @@ public abstract class CityFileImporter implements CityParserCallback {
             throws IOException {
 
         InputStream in = null;
-
+        importStatement = db.compileStatement(
+                String.format("INSERT INTO cities (%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)",
+                        CityContract.CityColumns.CITY_ID,
+                        CityContract.CityColumns.NAME,
+                        CityContract.CityColumns.COUNTRY,
+                        CityContract.CityColumns.LATITUDE,
+                        CityContract.CityColumns.LONGITUDE));
         try {
             long fileSize = srcFile.length();
             in = new FileInputStream(srcFile);
@@ -57,10 +65,20 @@ public abstract class CityFileImporter implements CityParserCallback {
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
         try {
+            db.beginTransaction();
             parser.parseCities(in, this);
-
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            db.endTransaction();
+            if(importStatement != null) {
+                try {
+                    importStatement.close();
+                } catch (Exception e) {
+
+                }
+            }
         }
     }
 
@@ -79,14 +97,13 @@ public abstract class CityFileImporter implements CityParserCallback {
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+        importStatement.bindLong(1, id);
+        importStatement.bindString(2,  name);
+        importStatement.bindString(3, country);
+        importStatement.bindDouble(4, latitude);
+        importStatement.bindDouble(5, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        long rowId = importStatement.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
