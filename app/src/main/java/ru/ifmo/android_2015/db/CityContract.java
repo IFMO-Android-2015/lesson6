@@ -57,10 +57,9 @@ public final class CityContract {
      */
     public static final class Cities implements CityColumns {
 
-        /**
-         * Название таблицы городов.
-         */
+
         public static final String TABLE = "cities";
+
 
         static final String CREATE_TABLE = "CREATE TABLE " + TABLE
                 + " ("
