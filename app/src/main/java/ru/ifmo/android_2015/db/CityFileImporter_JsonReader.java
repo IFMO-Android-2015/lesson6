@@ -1,6 +1,7 @@
 package ru.ifmo.android_2015.db;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import ru.ifmo.android_2015.json.CityJsonParser;
 import ru.ifmo.android_2015.json.CityJsonReaderParser;
@@ -10,8 +11,8 @@ import ru.ifmo.android_2015.json.CityJsonReaderParser;
  */
 public class CityFileImporter_JsonReader extends CityFileImporter {
 
-    public CityFileImporter_JsonReader(SQLiteDatabase db) {
-        super(db);
+    public CityFileImporter_JsonReader(SQLiteStatement insertStatement) {
+        super(insertStatement);
     }
 
     @Override
