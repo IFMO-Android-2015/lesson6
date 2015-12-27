@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/anton/lesson6/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/classes-f4c6e36e9a0dd8efe656a2c42beba23b9afb34ff.jar" />
+    </item>
+    <item
+        jar="/Users/anton/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho-urlconnection/1.2.0/2fcb9e36752f0ceb64056b7d73781e48e485a98c/stetho-urlconnection-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2fcb9e36752f0ceb64056b7d73781e48e485a98c">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/stetho-urlconnection-1.2.0-4e68a64d707ca84d159b91b3635f885939769c8e.jar" />
+    </item>
+    <item
+        jar="/Users/anton/lesson6/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/classes-458ad825fbc6908a82fc41ca55c51fe24ba90d3a.jar" />
+    </item>
+    <item
+        jar="/Users/anton/lesson6/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/libs/internal_impl-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.0-3cfc495441f963cdeff4392844abec4b9542370b.jar" />
+    </item>
+    <item
+        jar="/Users/anton/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.2/2bf96b7aa8b611c177d329452af1dc933e14501c/commons-cli-1.2.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/commons-cli-1.2-04bcdb3d67af5ebdbcc0f921e1c211afb15a4346.jar" />
+    </item>
+    <item
+        jar="/Users/anton/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho/1.2.0/1d6cdb8ce8185b8b23213fad48a83987fb6d2d67/stetho-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1d6cdb8ce8185b8b23213fad48a83987fb6d2d67">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/stetho-1.2.0-6b6810d69f3a04fd4aa51d7414a142355e51a588.jar" />
+    </item>
+    <item
+        jar="/Users/anton/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/2.0.1/516c03b21d50a644d538de0f0369c620989cd8f0/jsr305-2.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/jsr305-2.0.1-eede45da93c274621baf3376b2b782a425e4e9c2.jar" />
+    </item>
+    <item
+        jar="/Users/anton/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
+        <dex dex="/Users/anton/lesson6/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.0-f7f5ee10b7d3f4481e6942bba9114519ccc57cb3.jar" />
+    </item>
+
+</items>
