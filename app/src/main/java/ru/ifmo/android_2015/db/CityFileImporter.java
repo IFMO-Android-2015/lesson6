@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -22,6 +23,8 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
+    private SQLiteStatement insert;
+
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
@@ -32,6 +35,14 @@ public abstract class CityFileImporter implements CityParserCallback {
             throws IOException {
 
         InputStream in = null;
+        insert = db.compileStatement(
+                        "INSERT INTO cities("
+                        + CityContract.CityColumns.CITY_ID + ","
+                        + CityContract.CityColumns.NAME + ","
+                        + CityContract.CityColumns.COUNTRY + ","
+                        + CityContract.CityColumns.LATITUDE + ","
+                        + CityContract.CityColumns.LONGITUDE
+                        + ") VALUES (?, ?, ?, ?, ?)");
 
         try {
             long fileSize = srcFile.length();
@@ -39,9 +50,19 @@ public abstract class CityFileImporter implements CityParserCallback {
             in = new BufferedInputStream(in);
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
-            importCities(in);
 
+            db.beginTransaction();
+            try {
+                importCities(in);
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+                if (insert != null) {
+                    insert.close();
+                }
+            }
         } finally {
+
             if (in != null) {
                 try {
                     in.close();
@@ -79,14 +100,12 @@ public abstract class CityFileImporter implements CityParserCallback {
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
-
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        insert.bindLong(1, id);
+        insert.bindString(2, name);
+        insert.bindString(3, country);
+        insert.bindDouble(4, latitude);
+        insert.bindDouble(5, longitude);
+        long rowId = insert.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
