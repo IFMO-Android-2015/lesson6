@@ -6,4 +6,6 @@ package ru.ifmo.android_2015.json;
 public interface CityParserCallback {
 
     void onCityParsed(long id, String name, String country, double lat, double lon);
+    void onFirstCity();
+    void onLastCity();
 }
