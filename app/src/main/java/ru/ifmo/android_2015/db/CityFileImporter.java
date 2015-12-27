@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,10 +22,19 @@ import ru.ifmo.android_2015.util.ProgressCallback;
 public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
+    private SQLiteStatement statement;
     private int importedCount;
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
+        this.statement = db.compileStatement(String.format(
+                "INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)",
+                CityContract.Cities.TABLE,
+                CityContract.Cities.CITY_ID,
+                CityContract.Cities.NAME,
+                CityContract.Cities.COUNTRY,
+                CityContract.Cities.LATITUDE,
+                CityContract.Cities.LONGITUDE));
     }
 
     public final synchronized void importCities(File srcFile,
@@ -56,37 +66,37 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
+        db.beginTransaction();
         try {
             parser.parseCities(in, this);
-
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
         }
+        db.endTransaction();
     }
 
     @Override
     public void onCityParsed(long id, String name, String country, double lat, double lon) {
-        insertCity(db, id, name, country, lat, lon);
+        insertCity(id, name, country, lat, lon);
         importedCount++;
         if (importedCount % 1000 == 0) {
             Log.d(LOG_TAG, "Processed " + importedCount + " cities");
         }
     }
 
-    private boolean insertCity(SQLiteDatabase db,
-                               long id,
+    private boolean insertCity(long id,
                                @NonNull String name,
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+        statement.bindLong(1, id);
+        statement.bindString(2, name);
+        statement.bindString(3, country);
+        statement.bindDouble(4, latitude);
+        statement.bindDouble(5, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        long rowId = statement.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
