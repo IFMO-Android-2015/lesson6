@@ -51,6 +51,13 @@ public class InitCityDBActivity extends ProgressTaskActivity {
                               File file,
                               ProgressCallback progressCallback) throws IOException {
         SQLiteDatabase db = CityDBHelper.getInstance(context).getWritableDatabase();
-        new CityFileImporter_JsonReader(db).importCities(file, progressCallback);
+        db.beginTransaction();
+        try {
+            new CityFileImporter_JsonReader(db).importCities(file, progressCallback);
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
     }
 }
