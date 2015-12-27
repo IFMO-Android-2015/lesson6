@@ -75,7 +75,7 @@ public abstract class ProgressTaskActivity extends Activity {
             case ERROR:     return getString(R.string.error);
             case DONE:
             {
-                final double timeSec = task.getExecutionTimeMs() / 1000.0;
+                final double timeSec = task.getExecutionTimeMs() * 0.001;
                 return getString(R.string.done_sec_format, timeSec);
             }
         }
