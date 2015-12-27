@@ -21,25 +21,18 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
-    private SQLiteStatement insert = db.compileStatement(
-            CityContract.Cities.TABLE +
-            "(" +
-            CityContract.Cities.CITY_ID +
-            "," +
-            CityContract.Cities.NAME +
-            "," +
-            CityContract.Cities.COUNTRY +
-            "," +
-            CityContract.Cities.LATITUDE +
-            "," +
-            CityContract.Cities.LONGITUDE +
-            ")"
-    );
+    private SQLiteStatement insert;
 
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
-        //insert = db.compileStatement(EXPRESSION);
+        insert =  db.compileStatement(
+                String.format("INSERT INTO cities (%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)",
+                        CityContract.CityColumns.CITY_ID,
+                        CityContract.CityColumns.NAME,
+                        CityContract.CityColumns.COUNTRY,
+                        CityContract.CityColumns.LATITUDE,
+                        CityContract.CityColumns.LONGITUDE));
     }
 
     public final synchronized void importCities(File srcFile,
@@ -85,7 +78,7 @@ public abstract class CityFileImporter implements CityParserCallback {
                     Log.e(LOG_TAG, "SQLiteStatement is not closed: " + e, e);
                 }
             }
-            db.endTransaction();
+            //db.endTransaction();
         }
     }
 
