@@ -1,8 +1,7 @@
 package ru.ifmo.android_2015.db;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
+import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -22,6 +21,7 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
+    private SQLiteStatement sq_state;
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
@@ -57,10 +57,22 @@ public abstract class CityFileImporter implements CityParserCallback {
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
         try {
+            db.beginTransaction();
+            sq_state = db.compileStatement("INSERT INTO " + CityContract.Cities.TABLE + " ("
+                    + CityContract.Cities.CITY_ID + ", "
+                    + CityContract.Cities.NAME + ", "
+                    + CityContract.Cities.COUNTRY + ", "
+                    + CityContract.Cities.LATITUDE + ", "
+                    + CityContract.Cities.LONGITUDE + ") VALUES" + "(?, ?, ?, ?, ?)");
             parser.parseCities(in, this);
 
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            db.endTransaction();
+            if (sq_state != null)
+                sq_state.close();
         }
     }
 
@@ -79,14 +91,13 @@ public abstract class CityFileImporter implements CityParserCallback {
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        sq_state.bindLong(1, id);
+        sq_state.bindString(2, name);
+        sq_state.bindString(3, country);
+        sq_state.bindDouble(4, latitude);
+        sq_state.bindDouble(5, longitude);
+        long rowId = sq_state.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
