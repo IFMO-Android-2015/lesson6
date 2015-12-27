@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,6 +22,7 @@ import ru.ifmo.android_2015.util.ProgressCallback;
 public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
+    private SQLiteStatement statement;
     private int importedCount;
 
     public CityFileImporter(SQLiteDatabase db) {
@@ -34,13 +36,15 @@ public abstract class CityFileImporter implements CityParserCallback {
         InputStream in = null;
 
         try {
+            db.beginTransaction();
+            statement = db.compileStatement(CityContract.Cities.INSERT_TABLE);
             long fileSize = srcFile.length();
             in = new FileInputStream(srcFile);
             in = new BufferedInputStream(in);
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
             importCities(in);
-
+            db.setTransactionSuccessful();
         } finally {
             if (in != null) {
                 try {
@@ -48,6 +52,10 @@ public abstract class CityFileImporter implements CityParserCallback {
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "Failed to close file: " + e, e);
                 }
+            }
+            db.endTransaction();
+            if (statement != null) {
+                statement.close();
             }
         }
     }
@@ -73,25 +81,18 @@ public abstract class CityFileImporter implements CityParserCallback {
         }
     }
 
-    private boolean insertCity(SQLiteDatabase db,
+    private void insertCity(SQLiteDatabase db,
                                long id,
                                @NonNull String name,
                                @NonNull String country,
                                double latitude,
                                double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
-
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
-        if (rowId < 0) {
-            Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
-            return false;
-        }
-        return true;
+        statement.bindLong(1, id);
+        statement.bindString(2, name);
+        statement.bindString(3, country);
+        statement.bindDouble(4, latitude);
+        statement.bindDouble(5, longitude);
+        statement.execute();
     }
 
     private static final String LOG_TAG = "CityReader";
