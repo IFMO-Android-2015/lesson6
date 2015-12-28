@@ -17,9 +17,7 @@ public class CityJsonReaderParser implements CityJsonParser {
     @Override
     public void parseCities(InputStream in, @Nullable CityParserCallback callback)
             throws IOException {
-        if(callback != null) {
-            callback.onFirstCity();
-        }
+
         JsonReader reader = new JsonReader(new InputStreamReader(in));
         reader.beginArray();
 
@@ -27,9 +25,7 @@ public class CityJsonReaderParser implements CityJsonParser {
             parseCity(reader, callback);
         }
         reader.endArray();
-        if(callback != null) {
-            callback.onLastCity();
-        }
+
     }
 
     private void parseCity(JsonReader reader, CityParserCallback callback) throws IOException {
