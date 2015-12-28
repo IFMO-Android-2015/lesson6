@@ -1,4 +1,4 @@
-package ru.ifmo.android_2015.db;
+﻿package ru.ifmo.android_2015.db;
 
 /**
  * Определения реляционной модели данных городов.
@@ -71,6 +71,13 @@ public final class CityContract {
                 + LONGITUDE + " REAL"
                 + " )";
 
+        static final String INSERT_INTO = "INSERT INTO " + TABLE
+                + " ("
+                + CITY_ID + ", "
+                + NAME + ", "
+                + COUNTRY + ", "
+                + LATITUDE + ", "
+                + LONGITUDE + ") VALUES (?, ?, ?, ?, ?)";
     }
 
     private CityContract() {}
