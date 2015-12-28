@@ -35,13 +35,23 @@ public abstract class CityFileImporter implements CityParserCallback {
                                                 ProgressCallback progressCallback)
             throws IOException {
 
-
+        InputStream in = null;
         try {
             long fileSize = srcFile.length();
-            importCities(new GZIPInputStream(new ObservableInputStream(new BufferedInputStream(new FileInputStream(srcFile)), fileSize, progressCallback)));
+            in = new GZIPInputStream(new ObservableInputStream(new BufferedInputStream(new FileInputStream(srcFile)), fileSize, progressCallback));
+
+            importCities(in);
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Failed to close file: " + e, e);
+            Log.e(LOG_TAG, "Failed to read stream:  " + e, e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Failed to close file: " + e, e);
+                }
+            }
         }
     }
 
@@ -52,6 +62,7 @@ public abstract class CityFileImporter implements CityParserCallback {
         db.beginTransaction();
         try {
             parser.parseCities(in, this);
+            db.setTransactionSuccessful();
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
