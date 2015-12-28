@@ -71,6 +71,16 @@ public final class CityContract {
                 + LONGITUDE + " REAL"
                 + " )";
 
+        static final String INSERT_INTO =
+                "INSERT INTO " + CityContract.Cities.TABLE
+                        + "("
+                        + CityContract.CityColumns.CITY_ID + ","
+                        + CityContract.CityColumns.NAME + ","
+                        + CityContract.CityColumns.COUNTRY + ","
+                        + CityContract.CityColumns.LATITUDE + ","
+                        + CityContract.CityColumns.LONGITUDE
+                        + ")"
+                        + "VALUES (?,?,?,?,?)";
     }
 
     private CityContract() {}
