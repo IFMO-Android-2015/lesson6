@@ -44,13 +44,9 @@ public abstract class CityFileImporter implements CityParserCallback {
             importCities(in);
 
         } finally {
-            if (insert != null) {
+            if (in != null) {
                 try {
-                    try {
-                        insert.close();
-                    } catch (Exception e) {
-                        //ignore
-                    }
+                    in.close();
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "Failed to close file: " + e, e);
                 }
@@ -78,7 +74,11 @@ public abstract class CityFileImporter implements CityParserCallback {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
         } finally {
             if (insert != null) {
-                insert.close();
+                try {
+                    insert.close();
+                } catch (Exception e) {
+                    //ignore
+                }
             }
             db.endTransaction();
         }
