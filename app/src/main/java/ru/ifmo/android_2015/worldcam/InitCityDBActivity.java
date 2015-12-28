@@ -2,12 +2,14 @@ package ru.ifmo.android_2015.worldcam;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import ru.ifmo.android_2015.db.CityContract;
 import ru.ifmo.android_2015.db.CityDBHelper;
 import ru.ifmo.android_2015.db.CityFileImporter_JsonReader;
 import ru.ifmo.android_2015.util.DownloadUtils;
@@ -20,6 +22,15 @@ import ru.ifmo.android_2015.util.ProgressCallback;
  */
 public class InitCityDBActivity extends ProgressTaskActivity {
 
+    private static String QUERY = "INSERT INTO " + CityContract.Cities.TABLE
+            + "("
+            + CityContract.CityColumns.CITY_ID + ", "
+            + CityContract.CityColumns.NAME + ", "
+            + CityContract.CityColumns.COUNTRY + ", "
+            + CityContract.CityColumns.LATITUDE + ", "
+            + CityContract.CityColumns.LONGITUDE
+            + ")"
+            + "VALUES (?,?,?,?,?)";
     @Override
     protected ProgressTask createTask() {
         return new InitCityDBTask(this);
@@ -51,6 +62,13 @@ public class InitCityDBActivity extends ProgressTaskActivity {
                               File file,
                               ProgressCallback progressCallback) throws IOException {
         SQLiteDatabase db = CityDBHelper.getInstance(context).getWritableDatabase();
-        new CityFileImporter_JsonReader(db).importCities(file, progressCallback);
+        db.beginTransaction();
+        SQLiteStatement insertStatement = db.compileStatement(QUERY);
+        try {
+            new CityFileImporter_JsonReader(insertStatement).importCities(file, progressCallback);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 }
