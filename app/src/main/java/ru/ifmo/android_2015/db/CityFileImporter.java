@@ -72,9 +72,10 @@ public abstract class CityFileImporter implements CityParserCallback {
             if (db.inTransaction())
                 db.setTransactionSuccessful();
         } catch (Exception e) {
-            db.endTransaction();
             insert.close();
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            db.endTransaction();
         }
     }
 
