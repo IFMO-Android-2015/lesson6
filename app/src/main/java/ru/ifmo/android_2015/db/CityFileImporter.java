@@ -49,10 +49,6 @@ public abstract class CityFileImporter implements CityParserCallback {
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
             importCities(in);
-            if (db.inTransaction()) {
-                db.endTransaction();
-                Log.d(LOG_TAG, "transaction ended");
-            }
 
         } finally {
             if (in != null) {
@@ -62,10 +58,10 @@ public abstract class CityFileImporter implements CityParserCallback {
                     Log.e(LOG_TAG, "Failed to close file: " + e, e);
                 }
             }
-            if (db.inTransaction()) {
-                db.endTransaction();
-                Log.d(LOG_TAG, "transaction ended");
-            }
+        }
+        if (db.inTransaction()) {
+            db.endTransaction();
+            Log.d(LOG_TAG, "transaction ended");
         }
     }
 
@@ -83,8 +79,6 @@ public abstract class CityFileImporter implements CityParserCallback {
             }
 
         } catch (Exception e) {
-            db.endTransaction();
-            Log.d(LOG_TAG, "transaction ended");
             insertStatement.close();
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
         }
