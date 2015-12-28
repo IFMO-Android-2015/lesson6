@@ -44,10 +44,10 @@ public abstract class CityFileImporter implements CityParserCallback {
             importCities(in);
 
         } finally {
-            if (in != null) {
+            if (insert != null) {
                 try {
                     try {
-                        in.close();
+                        insert.close();
                     } catch (Exception e) {
                         //ignore
                     }
