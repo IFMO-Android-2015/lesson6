@@ -42,6 +42,7 @@ public abstract class CityFileImporter implements CityParserCallback {
 
         InputStream in = null;
 
+        db.beginTransaction();
         try {
             long fileSize = srcFile.length();
             in = new FileInputStream(srcFile);
@@ -50,7 +51,13 @@ public abstract class CityFileImporter implements CityParserCallback {
             in = new GZIPInputStream(in);
             importCities(in);
 
+            db.setTransactionSuccessful();
         } finally {
+            db.endTransaction();
+            Log.d(LOG_TAG, "transaction ended");
+            if (insertStatement != null) {
+                insertStatement.close();
+            }
             if (in != null) {
                 try {
                     in.close();
@@ -59,27 +66,16 @@ public abstract class CityFileImporter implements CityParserCallback {
                 }
             }
         }
-        if (db.inTransaction()) {
-            db.endTransaction();
-            Log.d(LOG_TAG, "transaction ended");
-        }
     }
 
     protected abstract CityJsonParser createParser();
 
     private void importCities(InputStream in) {
         CityJsonParser parser = createParser();
-        if (!db.inTransaction()) {
-            db.beginTransaction();
-        }
         try {
             parser.parseCities(in, this);
-            if (db.inTransaction()) {
-                db.setTransactionSuccessful();
-            }
 
         } catch (Exception e) {
-            insertStatement.close();
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
         }
     }
