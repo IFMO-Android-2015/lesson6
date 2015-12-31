@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/alexey/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho/1.2.0/1d6cdb8ce8185b8b23213fad48a83987fb6d2d67/stetho-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1d6cdb8ce8185b8b23213fad48a83987fb6d2d67">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/stetho-1.2.0-18fb9a92036fc449fd7220817881f49ca823bf19.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/libs/internal_impl-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.0-2af01e3313bccbaa9eb509f3fd3b932bb6ebe172.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.0/support-annotations-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.0-f1600b3802f33d81a1f8fd7760c028f091fd2513.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/classes-93519066d0817b0f241b3621aa94c70cdd0e5017.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/2.0.1/516c03b21d50a644d538de0f0369c620989cd8f0/jsr305-2.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/jsr305-2.0.1-bbc18367acbfb8bc31c986f9495dd74399726c48.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.2/2bf96b7aa8b611c177d329452af1dc933e14501c/commons-cli-1.2.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/commons-cli-1.2-34632fef69edba5f2d09a885c966567e5aca39f0.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/classes-d44f91adfd71c5a02bbaa20cf075365c11b9307d.jar" />
+    </item>
+    <item
+        jar="/Users/alexey/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho-urlconnection/1.2.0/2fcb9e36752f0ceb64056b7d73781e48e485a98c/stetho-urlconnection-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2fcb9e36752f0ceb64056b7d73781e48e485a98c">
+        <dex dex="/Users/alexey/Downloads/lesson6-master/app/build/intermediates/pre-dexed/debug/stetho-urlconnection-1.2.0-93298008a379ce49b722f51431432ea12ac4d302.jar" />
+    </item>
+
+</items>
