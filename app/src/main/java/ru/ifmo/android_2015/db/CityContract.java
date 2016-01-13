@@ -71,6 +71,15 @@ public final class CityContract {
                 + LONGITUDE + " REAL"
                 + " )";
 
+        public static final String INSERT_INTO_TABLE = "INSERT INTO " + TABLE
+                + " ("
+                + CITY_ID + ", "
+                + NAME + ", "
+                + COUNTRY + ", "
+                + LATITUDE + ", "
+                + LONGITUDE
+                + ") VALUES (?, ?, ?, ?, ?);";
+
     }
 
     private CityContract() {}
