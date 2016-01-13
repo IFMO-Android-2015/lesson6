@@ -1,9 +1,7 @@
 package ru.ifmo.android_2015.db;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -22,25 +20,43 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     private SQLiteDatabase db;
     private int importedCount;
+    private SQLiteStatement statement;
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
     }
 
-    public final synchronized void importCities(File srcFile,
-                                                ProgressCallback progressCallback)
-            throws IOException {
+    public final synchronized void importCities(
+            File srcFile, ProgressCallback progressCallback) throws IOException {
 
         InputStream in = null;
-
         try {
             long fileSize = srcFile.length();
             in = new FileInputStream(srcFile);
             in = new BufferedInputStream(in);
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
-            importCities(in);
 
+            CityJsonParser parser = createParser();
+            try {
+                db.execSQL("DROP TABLE IF EXISTS`" + CityContract.Cities.TABLE + "`");
+                db.execSQL(CityContract.Cities.CREATE_TABLE);
+                statement = db.compileStatement(CityContract.Cities.INSERT_INTO_TABLE);
+                db.beginTransaction();
+                parser.parseCities(in, this);
+                db.setTransactionSuccessful();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+            } finally {
+                db.endTransaction();
+                if (statement != null) {
+                    try {
+                        statement.close();
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "Error while close SQLiteStatement: " + e.getMessage());
+                    }
+                }
+            }
         } finally {
             if (in != null) {
                 try {
@@ -54,44 +70,23 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     protected abstract CityJsonParser createParser();
 
-    private void importCities(InputStream in) {
-        CityJsonParser parser = createParser();
-        try {
-            parser.parseCities(in, this);
-
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
-        }
-    }
-
     @Override
     public void onCityParsed(long id, String name, String country, double lat, double lon) {
-        insertCity(db, id, name, country, lat, lon);
+        statement.bindLong(1, id);
+        statement.bindString(2, name);
+        statement.bindString(3, country);
+        statement.bindDouble(4, lat);
+        statement.bindDouble(5, lon);
+
+        long rowId = statement.executeInsert();
+        if (rowId < 0) {
+            Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
+        }
+
         importedCount++;
         if (importedCount % 1000 == 0) {
             Log.d(LOG_TAG, "Processed " + importedCount + " cities");
         }
-    }
-
-    private boolean insertCity(SQLiteDatabase db,
-                               long id,
-                               @NonNull String name,
-                               @NonNull String country,
-                               double latitude,
-                               double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
-
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
-        if (rowId < 0) {
-            Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
-            return false;
-        }
-        return true;
     }
 
     private static final String LOG_TAG = "CityReader";
