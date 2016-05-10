@@ -40,6 +40,13 @@ public abstract class CityFileImporter implements CityParserCallback {
                 + ", " + CityContract.CityColumns.LONGITUDE + ") VALUES (?, ?, ?, ?, ?)";
 
         try {
+            long fileSize = srcFile.length();
+            in = new FileInputStream(srcFile);
+            in = new BufferedInputStream(in);
+            in = new ObservableInputStream(in, fileSize, progressCallback);
+            in = new GZIPInputStream(in);
+            importCities(in);
+
             db.beginTransaction();
             statement = db.compileStatement(expression);
 
