@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import ru.ifmo.android_2015.db.CityDBHelper;
 import ru.ifmo.android_2015.db.CityFileImporter_JsonReader;
+import ru.ifmo.android_2015.json.CityJsonReaderParser;
 import ru.ifmo.android_2015.util.DownloadUtils;
 import ru.ifmo.android_2015.util.FileUtils;
 import ru.ifmo.android_2015.util.ProgressCallback;

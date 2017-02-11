@@ -10,6 +10,8 @@ import ru.ifmo.android_2015.json.CityJsonReaderParser;
  */
 public class CityFileImporter_JsonReader extends CityFileImporter {
 
+    private static final String LOG_TAG = "CityReader";
+
     public CityFileImporter_JsonReader(SQLiteDatabase db) {
         super(db);
     }

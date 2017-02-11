@@ -62,7 +62,7 @@ public final class CityContract {
          */
         public static final String TABLE = "cities";
 
-        static final String CREATE_TABLE = "CREATE TABLE " + TABLE
+        public static final String CREATE_TABLE = "CREATE TABLE " + TABLE
                 + " ("
                 + CITY_ID + " INTEGER PRIMARY KEY, "
                 + NAME + " TEXT, "
@@ -70,6 +70,15 @@ public final class CityContract {
                 + LATITUDE + " REAL, "
                 + LONGITUDE + " REAL"
                 + " )";
+
+        public static final String INSERT_INTO_TABLE = "INSERT INTO " + TABLE
+                + " ("
+                + CITY_ID + ", "
+                + NAME + ", "
+                + COUNTRY + ", "
+                + LATITUDE + ", "
+                + LONGITUDE
+                + ") VALUES (?, ?, ?, ?, ?);";
 
     }
 
