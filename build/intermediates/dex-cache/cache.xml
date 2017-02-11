@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\user\.gradle\caches\modules-2\files-2.1\com.facebook.stetho\stetho\1.2.0\1d6cdb8ce8185b8b23213fad48a83987fb6d2d67\stetho-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1d6cdb8ce8185b8b23213fad48a83987fb6d2d67">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\stetho-1.2.0-4330f472db2f923c02cd3f29d1fe8949d289cf63.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\classes-5d89f73b852911468937d7fdb495dc56dec0a042.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.0\support-annotations-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.0-663270283fa374e7034b14be5a187e68c8881c63.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\libs\internal_impl-23.1.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.0-a53a8c399f9b9159c6a36ca1235d2f35f0800b99.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\.gradle\caches\modules-2\files-2.1\com.facebook.stetho\stetho-urlconnection\1.2.0\2fcb9e36752f0ceb64056b7d73781e48e485a98c\stetho-urlconnection-1.2.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2fcb9e36752f0ceb64056b7d73781e48e485a98c">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\stetho-urlconnection-1.2.0-5600dd8ca5ed1192395700770f96bce0752cc57f.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\2.0.1\516c03b21d50a644d538de0f0369c620989cd8f0\jsr305-2.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="516c03b21d50a644d538de0f0369c620989cd8f0">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\jsr305-2.0.1-22abbae15ffe2f74a6d57b543386d64435b49b19.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\classes-cb2f04cd0f9734c0f0632a22f611fcab7a18aeb3.jar" />
+    </item>
+    <item
+        jar="C:\Users\user\.gradle\caches\modules-2\files-2.1\commons-cli\commons-cli\1.2\2bf96b7aa8b611c177d329452af1dc933e14501c\commons-cli-1.2.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="C:\Users\user\Documents\GitHub\lesson6\app\build\intermediates\pre-dexed\debug\commons-cli-1.2-4d2640622a0d3f9c747fcf1bc10c837b710dae1c.jar" />
+    </item>
+
+</items>
