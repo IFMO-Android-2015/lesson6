@@ -62,6 +62,8 @@ public final class CityContract {
          */
         public static final String TABLE = "cities";
 
+        public static final String INSERT = "INSERT INTO " + TABLE + " VALUES(?, ?, ?, ?, ?)";
+
         static final String CREATE_TABLE = "CREATE TABLE " + TABLE
                 + " ("
                 + CITY_ID + " INTEGER PRIMARY KEY, "

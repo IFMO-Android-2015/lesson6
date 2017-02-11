@@ -1,8 +1,7 @@
 package ru.ifmo.android_2015.db;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
+import android.database.sqlite.SQLiteStatement;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -20,8 +19,12 @@ import ru.ifmo.android_2015.util.ProgressCallback;
 
 public abstract class CityFileImporter implements CityParserCallback {
 
+    public static final int INSERTS_IN_TRANSACTION = 10000;
+
     private SQLiteDatabase db;
-    private int importedCount;
+    private SQLiteStatement statement;
+    private boolean inTransaction;
+    private int insertsMadeInCurrentTx;
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
@@ -40,7 +43,6 @@ public abstract class CityFileImporter implements CityParserCallback {
             in = new ObservableInputStream(in, fileSize, progressCallback);
             in = new GZIPInputStream(in);
             importCities(in);
-
         } finally {
             if (in != null) {
                 try {
@@ -54,46 +56,50 @@ public abstract class CityFileImporter implements CityParserCallback {
 
     protected abstract CityJsonParser createParser();
 
-    private void importCities(InputStream in) {
-        CityJsonParser parser = createParser();
+    private void importCities(final InputStream in) {
+        statement = db.compileStatement(CityContract.Cities.INSERT);
         try {
-            parser.parseCities(in, this);
+            try {
+                CityJsonParser parser = createParser();
+                parser.parseCities(in, CityFileImporter.this);
 
+                if (db.inTransaction()) {
+                    db.setTransactionSuccessful();
+                }
+            } finally {
+                if (db.inTransaction()) {
+                    db.endTransaction();
+                }
+            }
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            statement.close();
         }
     }
 
     @Override
-    public void onCityParsed(long id, String name, String country, double lat, double lon) {
-        insertCity(db, id, name, country, lat, lon);
-        importedCount++;
-        if (importedCount % 1000 == 0) {
-            Log.d(LOG_TAG, "Processed " + importedCount + " cities");
+    public void onCityParsed(long id, @NonNull String name, @NonNull String country, double lat, double lon) {
+        if(!inTransaction) {
+            inTransaction = true;
+            db.beginTransaction();
+            insertsMadeInCurrentTx = 0;
         }
-    }
 
-    private boolean insertCity(SQLiteDatabase db,
-                               long id,
-                               @NonNull String name,
-                               @NonNull String country,
-                               double latitude,
-                               double longitude) {
-        final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+        statement.bindLong(1, id);
+        statement.bindString(2, name);
+        statement.bindString(3, country);
+        statement.bindDouble(4, lat);
+        statement.bindDouble(5, lon);
+        statement.executeInsert();
+        insertsMadeInCurrentTx++;
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
-        if (rowId < 0) {
-            Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
-            return false;
+        if (insertsMadeInCurrentTx == INSERTS_IN_TRANSACTION) {
+            inTransaction = false;
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
-        return true;
     }
 
     private static final String LOG_TAG = "CityReader";
-
 }
