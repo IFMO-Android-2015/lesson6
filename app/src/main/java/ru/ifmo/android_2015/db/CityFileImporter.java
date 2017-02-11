@@ -2,6 +2,7 @@ package ru.ifmo.android_2015.db;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -20,12 +21,16 @@ import ru.ifmo.android_2015.util.ProgressCallback;
 
 public abstract class CityFileImporter implements CityParserCallback {
 
+    public static final int INSERTS_IN_TRANSACTION = 9001;
     private SQLiteDatabase db;
     private int importedCount;
+    private SQLiteStatement insert;
 
     public CityFileImporter(SQLiteDatabase db) {
         this.db = db;
     }
+
+    private int insertsCount;
 
     public final synchronized void importCities(File srcFile,
                                                 ProgressCallback progressCallback)
@@ -55,21 +60,47 @@ public abstract class CityFileImporter implements CityParserCallback {
     protected abstract CityJsonParser createParser();
 
     private void importCities(InputStream in) {
-        CityJsonParser parser = createParser();
         try {
+            Log.i(LOG_TAG, "Start import");
+            insert = db.compileStatement("INSERT INTO cities ("
+                    + CityContract.CityColumns.CITY_ID + ","
+                    + CityContract.CityColumns.NAME + ","
+                    + CityContract.CityColumns.COUNTRY + ","
+                    + CityContract.CityColumns.LATITUDE + ","
+                    + CityContract.CityColumns.LONGITUDE
+                    + ") VALUES (?,?,?,?,?)");
+            CityJsonParser parser = createParser();
             parser.parseCities(in, this);
-
+            if (db.inTransaction()) {
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            }
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to parse cities: " + e, e);
+        } finally {
+            if (insert != null) {
+                try {
+                    insert.close();
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
+            }
         }
     }
 
     @Override
     public void onCityParsed(long id, String name, String country, double lat, double lon) {
+        if (!db.inTransaction()) {
+            db.beginTransaction();
+            Log.i(LOG_TAG, "Start transaction");
+            insertsCount = 0;
+        }
         insertCity(db, id, name, country, lat, lon);
-        importedCount++;
-        if (importedCount % 1000 == 0) {
-            Log.d(LOG_TAG, "Processed " + importedCount + " cities");
+        if (insertsCount == INSERTS_IN_TRANSACTION) {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            importedCount += INSERTS_IN_TRANSACTION;
+            Log.d(LOG_TAG, "Transaction ready " + importedCount + " cities");
         }
     }
 
@@ -80,16 +111,18 @@ public abstract class CityFileImporter implements CityParserCallback {
                                double latitude,
                                double longitude) {
         final ContentValues values = new ContentValues();
-        values.put(CityContract.CityColumns.CITY_ID, id);
-        values.put(CityContract.CityColumns.NAME, name);
-        values.put(CityContract.CityColumns.COUNTRY, country);
-        values.put(CityContract.CityColumns.LATITUDE, latitude);
-        values.put(CityContract.CityColumns.LONGITUDE, longitude);
+        insert.bindLong(1, id);
+        insert.bindString(2, name);
+        insert.bindString(3, country);
+        insert.bindDouble(4, latitude);
+        insert.bindDouble(5, longitude);
 
-        long rowId = db.insert(CityContract.Cities.TABLE, null /*nullColumnHack not needed*/, values);
+        long rowId = insert.executeInsert();
         if (rowId < 0) {
             Log.w(LOG_TAG, "Failed to insert city: id=" + id + " name=" + name);
             return false;
+        } else {
+            insertsCount++;
         }
         return true;
     }
