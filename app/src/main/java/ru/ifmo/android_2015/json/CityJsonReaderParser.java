@@ -13,6 +13,13 @@ import java.util.Arrays;
  * Created by dmitry.trunin on 16.11.2015.
  */
 public class CityJsonReaderParser implements CityJsonParser {
+    private static final int
+            ID_HASH = "_id".hashCode(),
+            NAME_HASH = "name".hashCode(),
+            COUNTRY_HASH = "country".hashCode(),
+            COORD_HASH = "coord".hashCode(),
+            LAT_HASH = "lat".hashCode(),
+            LON_HASH = "lon".hashCode();
 
     @Override
     public void parseCities(InputStream in, @Nullable CityParserCallback callback)
@@ -42,15 +49,26 @@ public class CityJsonReaderParser implements CityJsonParser {
                 reader.skipValue();
                 continue;
             }
+            int fieldHash = name.hashCode();
 
-            switch (name) {
-                case "_id":     id = reader.nextLong(); break;
-                case "name":    cityName = reader.nextString(); break;
-                case "country": country = reader.nextString(); break;
-                case "coord":   latLon = parseCoord(reader); break;
-
-                default:        reader.skipValue(); break;
+            if (fieldHash == ID_HASH) {
+                id = reader.nextLong();
+                continue;
             }
+            if (fieldHash == NAME_HASH) {
+                cityName = reader.nextString();
+                continue;
+            }
+            if (fieldHash == COUNTRY_HASH) {
+                country = reader.nextString();
+                continue;
+            }
+            if (fieldHash == COORD_HASH) {
+                latLon = parseCoord(reader);
+                continue;
+            }
+
+            reader.skipValue();
         }
         reader.endObject();
 
@@ -76,18 +94,24 @@ public class CityJsonReaderParser implements CityJsonParser {
                 continue;
             }
 
-            switch (name) {
-                case "lat":     lat = reader.nextDouble(); break;
-                case "lon":     lon = reader.nextDouble(); break;
+            int nameHash = name.hashCode();
 
-                default:        reader.skipValue(); break;
+            if (nameHash == LAT_HASH) {
+                lat = reader.nextDouble();
+                continue;
             }
+            if (nameHash == LON_HASH) {
+                lon = reader.nextDouble();
+                continue;
+            }
+
+            reader.skipValue();
         }
         reader.endObject();
 
         // NaN == NaN всегда false
         if (lat == lat && lon == lon) {
-            return new double[] { lat, lon };
+            return new double[]{lat, lon};
         }
         Log.w(LOG_TAG, "Incomplete coordinates: lat=" + lat + " lon=" + lon);
         return null;
